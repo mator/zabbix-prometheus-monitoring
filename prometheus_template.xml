@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>4.4</version>
+    <date>2021-03-03T12:07:30Z</date>
+    <groups>
+        <group>
+            <name>Templates/Applications</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template App Prometheus Service</template>
+            <name>Template App Prometheus Service</name>
+            <description>Prometheus monitoring by zabbix. &#13;
+&#13;
+Currently monitored 3 items:&#13;
+- number of targets&#13;
+- number of series/metrics&#13;
+- number of queries being executed or waiting&#13;
+- number of series appended in 5m interval&#13;
+&#13;
+could be:&#13;
+- prometheus http service status</description>
+            <groups>
+                <group>
+                    <name>Templates/Applications</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Prometheus</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>engine queries</name>
+                    <type>DEPENDENT</type>
+                    <key>prometheus_engine_queries</key>
+                    <delay>0</delay>
+                    <description>The current number of queries being executed or waiting.</description>
+                    <applications>
+                        <application>
+                            <name>Prometheus</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>{__name__=&quot;prometheus_engine_queries&quot;}
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>prometheus_http_metrics</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>HTTP prometheus metrics</name>
+                    <type>HTTP_AGENT</type>
+                    <key>prometheus_http_metrics</key>
+                    <delay>2m</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <description>Local prometheus metrics</description>
+                    <applications>
+                        <application>
+                            <name>Prometheus</name>
+                        </application>
+                    </applications>
+                    <timeout>5s</timeout>
+                    <url>http://{HOST.IP}:9090/metrics</url>
+                </item>
+                <item>
+                    <name>prometheus_sd_discovered_targets</name>
+                    <key>prometheus_sd_discovered_targets</key>
+                    <delay>2m</delay>
+                    <description>Current number of discovered targets.</description>
+                    <applications>
+                        <application>
+                            <name>Prometheus</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>prometheus_target_scrape_pool_targets</name>
+                    <key>prometheus_target_scrape_pool_targets</key>
+                    <delay>2m</delay>
+                    <description>Current number of targets in this scrape pool.</description>
+                    <applications>
+                        <application>
+                            <name>Prometheus</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>prometheus_tsdb_head_samples_appended</name>
+                    <key>prometheus_tsdb_head_samples_appended</key>
+                    <delay>2m</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>Number of appended samples (per 5 minute interval), please see zabbix-agent.d configuration for exact time value.</description>
+                    <applications>
+                        <application>
+                            <name>Prometheus</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>prometheus_tsdb_head_series</name>
+                    <type>DEPENDENT</type>
+                    <key>prometheus_tsdb_head_series</key>
+                    <delay>0</delay>
+                    <description>Total number of series/metrics in the head block.</description>
+                    <applications>
+                        <application>
+                            <name>Prometheus</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>{__name__=&quot;prometheus_tsdb_head_series&quot;}
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>prometheus_http_metrics</key>
+                    </master_item>
+                </item>
+            </items>
+        </template>
+    </templates>
+</zabbix_export>
