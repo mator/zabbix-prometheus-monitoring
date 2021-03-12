@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.4</version>
-    <date>2021-03-03T12:07:30Z</date>
+    <date>2021-03-12T13:48:20Z</date>
     <groups>
         <group>
             <name>Templates/Applications</name>
@@ -33,7 +33,7 @@ could be:&#13;
             </applications>
             <items>
                 <item>
-                    <name>engine queries</name>
+                    <name>prometheus_engine_queries</name>
                     <type>DEPENDENT</type>
                     <key>prometheus_engine_queries</key>
                     <delay>0</delay>
@@ -47,6 +47,41 @@ could be:&#13;
                         <step>
                             <type>PROMETHEUS_PATTERN</type>
                             <params>{__name__=&quot;prometheus_engine_queries&quot;}
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>prometheus_http_metrics</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last(5m)}&gt;15</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{last(5m)}&lt;15</recovery_expression>
+                            <name>High number of concurrent queries</name>
+                            <status>DISABLED</status>
+                            <priority>WARNING</priority>
+                            <description>High number of concurrent queries (75 % of prometheus_engine_queries_concurrent_max )</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>prometheus_engine_queries_concurrent_max</name>
+                    <type>DEPENDENT</type>
+                    <key>prometheus_engine_queries_concurrent_max</key>
+                    <delay>0</delay>
+                    <status>DISABLED</status>
+                    <description>The max number of concurrent queries.&#13;
+See as well &quot;--query.max-concurrency&quot; command line flag.</description>
+                    <applications>
+                        <application>
+                            <name>Prometheus</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>prometheus_engine_queries_concurrent_max{}
 </params>
                         </step>
                     </preprocessing>
@@ -110,6 +145,7 @@ could be:&#13;
                     <type>DEPENDENT</type>
                     <key>prometheus_tsdb_head_series</key>
                     <delay>0</delay>
+                    <value_type>FLOAT</value_type>
                     <description>Total number of series/metrics in the head block.</description>
                     <applications>
                         <application>
